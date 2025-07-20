@@ -205,7 +205,7 @@ class SnakeGUI:
         try:
             # 执行动作
             observation, reward, terminated, truncated, info = self.env.step(action)
-            
+            print(f"Move executed: {action}")
             # 检查游戏是否结束
             if terminated or truncated:
                 self.game_over = True
