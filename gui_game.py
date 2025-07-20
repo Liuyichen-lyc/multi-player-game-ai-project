@@ -520,7 +520,7 @@ class MultiGameGUI:
         board = self.env.game.board
         for row in range(board_size):
             for col in range(board_size):
-                if board[row, col] != 0:
+                if board[row][col] != 0:
                     x = self.margin + col * self.cell_size + 2
                     y = self.margin + row * self.cell_size + 2
                     rect = pygame.Rect(x, y, self.cell_size - 4, self.cell_size - 4)
