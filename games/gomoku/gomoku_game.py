@@ -12,6 +12,12 @@ class GomokuGame(BaseGame):
     """五子棋游戏"""
     
     def __init__(self, board_size: int = 15, win_length: int = 5, **kwargs):
+        game_config = {
+            'board_size': board_size,
+            'win_length': win_length
+        }
+        self.game_config = game_config
+        super().__init__(game_config)
         self.board_size = board_size
         self.win_length = win_length
         self.board = np.zeros((self.board_size, self.board_size), dtype=int)
