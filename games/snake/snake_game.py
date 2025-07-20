@@ -20,9 +20,10 @@ class SnakeGame(BaseGame):
             'timeout': config.GAME_CONFIGS['snake']['timeout'],
             'max_moves': config.GAME_CONFIGS['snake']['max_moves']
         }
+        self.game_config = game_config
         super().__init__(game_config)
-        
-        self.board_size = board_size
+        self.board = self._initialize_board()
+        self.board_size = game_config.get("board_size", 10)
         self.initial_length = initial_length
         self.food_count = food_count
         
@@ -40,9 +41,12 @@ class SnakeGame(BaseGame):
         self.alive2 = True
         
         self.reset()
-    
+
+    def _initialize_board(self):
+        return [[0] * self.board_size for _ in range(self.board_size)]
     def reset(self) -> Dict[str, Any]:
         """重置游戏状态"""
+        self.board = self._initialize_board()
         # 初始化蛇的位置
         center = self.board_size // 2
         self.snake1 = [(center, center - 2)]
@@ -108,7 +112,7 @@ class SnakeGame(BaseGame):
             'alive1': self.alive1,
             'alive2': self.alive2
         }
-        
+        self.current_player = 2 if self.current_player == 1 else 1
         return observation, reward, done, info
     
     def get_valid_actions(self, player: int = None) -> List[Tuple[int, int]]:
@@ -281,7 +285,10 @@ class SnakeGame(BaseGame):
     
     def _check_game_over(self) -> bool:
         """检查游戏是否结束"""
-        return not (self.alive1 or self.alive2)
+        if not self.alive1 or not self.alive2:
+            self.game_state = config.GameState.OVER
+            return True
+        return False
     
     def _calculate_reward(self) -> float:
         """计算奖励"""
