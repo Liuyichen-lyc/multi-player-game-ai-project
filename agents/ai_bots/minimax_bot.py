@@ -1,6 +1,6 @@
 from agents.base_agent import BaseAgent
 import copy
-
+import time
 class MinimaxBot(BaseAgent):
     def __init__(self, name="MinimaxBot", player_id=1, max_depth=2):
         super().__init__(name, player_id)
@@ -20,7 +20,7 @@ class MinimaxBot(BaseAgent):
             # 执行动作
             game_copy.step(action)
             # 计算分数
-            score = self.minimax(game_copy, self.max_depth - 1, False)
+            score = self.minimax(game_copy, self.max_depth - 1, float('-inf'), float('inf'),False)
             
             if score > best_score:
                 best_score = score
@@ -28,7 +28,7 @@ class MinimaxBot(BaseAgent):
                 
         return best_action
 
-    def minimax(self, game, depth, maximizing):
+    def minimax(self, game, depth, alpha , beta ,maximizing):
         if depth == 0 or game.is_terminal():
             winner = game.get_winner()
             if winner == self.player_id:
@@ -47,7 +47,7 @@ class MinimaxBot(BaseAgent):
             for action in valid_actions:
                 game_copy = game.clone()
                 game_copy.step(action)
-                score = self.minimax(game_copy, depth - 1, False)
+                score = self.minimax(game_copy, depth - 1,float('-inf'), float('inf'), False)
                 max_score = max(max_score, score)
             return max_score
         else:
@@ -55,6 +55,29 @@ class MinimaxBot(BaseAgent):
             for action in valid_actions:
                 game_copy = game.clone()
                 game_copy.step(action)
-                score = self.minimax(game_copy, depth - 1, True)
+                score = self.minimax(game_copy, depth - 1,float('-inf'), float('inf'), True)
                 min_score = min(min_score, score)
             return min_score 
+            
+        def get_action(self, observation, env):
+            start_time = time.time()
+            valid_actions = env.get_valid_actions()
+            if not valid_actions:
+                return None
+
+            best_score = float('-inf')
+            best_action = valid_actions[0]
+
+            for action in valid_actions:
+                if time.time() - start_time > 1:  # 限制时间为 1 秒
+                    break
+
+                game_copy = env.game.clone()
+                game_copy.step(action)
+                score = self.minimax(game_copy, self.max_depth - 1, float('-inf'), float('inf'), False)
+
+                if score > best_score:
+                    best_score = score
+                    best_action = action
+
+            return best_action
