@@ -20,9 +20,14 @@ class BaseGame(ABC):
         self.start_time = time.time()
         self.last_move_time = time.time()
         self.history = []  # 游戏历史记录
-        
+        self.board_size = game_config.get("board_size", 10)
+        self.food_count = self.game_config.get("food_count", 5)
+        self.board = self._initialize_board()
+        self.game_config = game_config or {}
         self.reset()
-    
+
+    def _initialize_board(self):
+        return [[0] * self.board_size for _ in range(self.board_size)]
     @abstractmethod
     def reset(self) -> Dict[str, Any]:
         """重置游戏状态"""
