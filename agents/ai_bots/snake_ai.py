@@ -95,7 +95,8 @@ class SnakeAI(BaseAgent):
         # action已经是方向元组 (dx, dy)
         direction = action
         new_head = (head[0] + direction[0], head[1] + direction[1])
-        
+        snake_positions = set(game.snake1[:-1] + game.snake2[:-1])
+
         # 检查边界
         if (new_head[0] < 0 or new_head[0] >= game.board_size or
             new_head[1] < 0 or new_head[1] >= game.board_size):
